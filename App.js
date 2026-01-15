@@ -1,60 +1,148 @@
 // App.js
+// ------------------------------------------------------------
+// Componente principal de una app React Native tipo "ToDo".
+// Aquí se gestiona el estado global (texto del input y tareas),
+// y se definen las funciones para añadir y marcar tareas.
+// ------------------------------------------------------------
 
-// Importamos React y el hook useState para manejar estado en componentes funcionales
+// Importamos React (necesario para JSX) y el hook useState
+// useState permite guardar "estado" en componentes funcionales
 import React, { useState } from 'react';
 
-// Importamos componentes nativos desde React Native
+// Importamos componentes nativos de React Native
 import {
-  StyleSheet,
-  View,
-  Text,
-  TextInput,
-  Button,
-  FlatList,
-  StatusBar,
+  StyleSheet,   // Para definir estilos (similar a CSS pero en JS)
+  View,         // Contenedor tipo <div>
+  Text,         // Texto visible en pantalla
+  TextInput,    // Campo de entrada de texto
+  Button,       // Botón nativo simple
+  FlatList,     // Lista optimizada para muchos elementos (mejor que map)
+  StatusBar,    // Controla apariencia de la barra superior (hora, batería, etc.)
 } from 'react-native';
 
-// Importamos nuestros componentes propios
+// Importamos componentes propios (hechos por ti)
+// Header: normalmente el título o cabecera de la app
+// TaskItem: componente para representar una tarea individual en la lista
 import Header from './components/Header';
 import TaskItem from './components/TaskItem';
 
-// Componente principal de la aplicación
+// ------------------------------------------------------------
+// Componente principal exportado por defecto.
+// En React Native, App() suele ser el "punto de entrada" de la UI.
+// ------------------------------------------------------------
 export default function App() {
-  // Estado para el texto del input (lo que el usuario está escribiendo)
+
+  // Estado que guarda lo que el usuario está escribiendo en el input
+  // taskText = valor actual
+  // setTaskText = función para actualizarlo
   const [taskText, setTaskText] = useState('');
-  // Estado para la lista de tareas, inicialmente un array vacío
+
+  // Estado que guarda el array de tareas
+  // Cada tarea será un objeto: { id, text, done }
   const [tasks, setTasks] = useState([]);
 
-  // Función que añade una nueva tarea a la lista
+  // ------------------------------------------------------------
+  // Añadir tarea
+  // ------------------------------------------------------------
   const handleAddTask = () => {
-    // Evita añadir tareas vacías o solo con espacios
+
+    // trim() quita espacios al inicio/fin
+    // Si después de trim queda vacío, no añadimos nada
     if (!taskText.trim()) return;
 
-    // Creamos un objeto tarea con id, texto y si está hecha o no
+    // Creamos el objeto de tarea
     const newTask = {
-      id: Date.now().toString(), // id basada en la marca de tiempo actual
+      // Date.now() devuelve milisegundos desde 1970 -> número único "casi siempre"
+      // lo pasamos a string porque FlatList suele usar keys como string
+      id: Date.now().toString(),
+
+      // Guardamos el texto limpio (sin espacios sobrantes)
       text: taskText.trim(),
+
+      // done indica si la tarea está completada
       done: false,
     };
 
     // Actualizamos el estado de tareas:
-    // - colocamos la nueva tarea al principio
-    // - dejamos el resto de tareas después
+    // Ponemos la nueva tarea al principio para que aparezca arriba
+    // OJO: aquí usas "tasks" directamente (estado actual).
+    // Si hubiera muchas actualizaciones seguidas, una versión más robusta sería:
+    // setTasks(prev => [newTask, ...prev])
     setTasks([newTask, ...tasks]);
 
-    // Limpiamos el input después de añadir
+    // Limpiamos el input para que el usuario pueda escribir otra tarea
     setTaskText('');
   };
 
-  // Función que alterna (marca/desmarca) una tarea como completada
+  // ------------------------------------------------------------
+  // Marcar / desmarcar tarea como hecha
+  // Recibe el id de la tarea pulsada
+  // ------------------------------------------------------------
   const handleToggleTask = (id) => {
-    // Usamos la versión funcional de setTasks, recibiendo el estado anterior (prev)
+
+    // Usamos la forma funcional de setTasks:
+    // prev es el estado anterior más fiable (evita problemas por asincronía)
     setTasks((prev) =>
-      // Recorremos todas las tareas
+      // map recorre todo el array y devuelve otro array nuevo
       prev.map((t) =>
-        // Si la id coincide, devolvemos una copia con done invertido
+        // Si esta tarea tiene el id recibido:
+        // devolvemos una COPIA del objeto, cambiando done a su contrario
+        // (inmutabilidad: no se modifica el objeto original)
         t.id === id ? { ...t, done: !t.done } : t
       )
     );
   };
+
+  // ------------------------------------------------------------
+  // Render (JSX)
+  // ------------------------------------------------------------
+  return (
+    // Contenedor principal (parece que actúa como "safe area" manual)
+    <View style={styles.safe}>
+
+      {/* StatusBar controla el color del texto/iconos de la barra superior */}
+      <StatusBar barStyle="dark-content" />
+
+      {/* Contenedor principal con padding/márgenes */}
+      <View style={styles.container}>
+
+        {/* Cabecera de la app (título, logo, etc.) */}
+        <Header />
+
+        {/* Bloque horizontal: input + botón */}
+        <View style={styles.inputContainer}>
+
+          <TextInput
+            // Estilos del campo
+            style={styles.input}
+
+            // Texto que aparece cuando el input está vacío
+            placeholder="Escribe una tarea..."
+
+            // value enlaza el input con el estado (componente controlado)
+            value={taskText}
+
+            // Cada vez que el usuario escribe, actualizamos taskText
+            // setTaskText recibe directamente el texto
+            onChangeText={setTaskText}
+
+            // Permite que al pulsar "Enter/Done" en el teclado se añada la tarea
+            onSubmitEditing={handleAddTask}
+          />
+
+          {/* Botón para añadir usando la función anterior */}
+          <Button title="Añadir" onPress={handleAddTask} />
+
+        </View>
+
+        {/*
+          Aquí falta (en tu snippet) la parte que muestra la lista de tareas.
+          Normalmente se usaría FlatList con:
+          data={tasks}
+          renderItem={({ item }) => <TaskItem ... />}
+          keyExtractor={(item) => item.id}
+        */}
+      </View>
+    </View>
+  );
 }
