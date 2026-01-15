@@ -135,13 +135,8 @@ export default function App() {
 
         </View>
 
-        {/*
-          Aquí falta (en tu snippet) la parte que muestra la lista de tareas.
-          Normalmente se usaría FlatList con:
-          data={tasks}
-          renderItem={({ item }) => <TaskItem ... />}
-          keyExtractor={(item) => item.id}
-        */}
+        {
+        }
       </View>
     </View>
   );
