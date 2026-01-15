@@ -65,7 +65,6 @@ export default function App() {
 
     // Actualizamos el estado de tareas:
     // Ponemos la nueva tarea al principio para que aparezca arriba
-    // OJO: aquí usas "tasks" directamente (estado actual).
     // Si hubiera muchas actualizaciones seguidas, una versión más robusta sería:
     // setTasks(prev => [newTask, ...prev])
     setTasks([newTask, ...tasks]);
