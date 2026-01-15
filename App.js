@@ -146,3 +146,50 @@ export default function App() {
     </View>
   );
 }
+
+
+// Definición de estilos usando StyleSheet
+const styles = StyleSheet.create({
+  // Estilo del contenedor general (SafeAreaView)
+  safe: {
+    flex: 1, // ocupa toda la pantalla
+    backgroundColor: '#f2f2f2', // gris claro de fondo
+  },
+  // Estilo del contenedor principal interno
+  container: {
+    flex: 1,
+    paddingHorizontal: 16, // margen lateral
+  },
+  // Contenedor del input y del botón
+  inputContainer: {
+    flexDirection: 'row', // colocamos los elementos en fila (horizontal)
+    gap: 8, // separación entre input y botón
+    marginBottom: 8, // espacio bajo el bloque
+  },
+  // Estilo del campo de texto
+  input: {
+    flex: 1, // ocupa todo el espacio disponible antes del botón
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  // Estilo del texto del contador
+  counter: {
+    fontSize: 14,
+    marginBottom: 8,
+    color: '#333',
+  },
+  // Estilo aplicado al contenedor de FlatList cuando está vacío
+  emptyContainer: {
+    flexGrow: 1,
+    justifyContent: 'center', // centrado vertical
+  },
+  // Estilo del texto de "no hay tareas"
+  empty: {
+    textAlign: 'center',
+    color: '#777',
+  },
+});
